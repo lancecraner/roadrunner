@@ -20,7 +20,7 @@ public class Unit {
 	private int Hex = 0;
 	private boolean selected = false;
 	private int remainingMovementPoints;
-	private String Army;
+	private String army;
 	boolean disrupted = false;
 	
 	private Rect displayRect;
@@ -49,7 +49,7 @@ public class Unit {
         resourceID = context.getResources().getIdentifier(splits[10], "drawable",context.getPackageName());
         bitmapSelected = BitmapFactory.decodeResource(context.getResources(), resourceID);
         
-        Army = splits[11];
+        this.army = splits[11];
         
     }
 	
@@ -160,8 +160,6 @@ public class Unit {
     public void resetRemainingMovementPoints(){
     	this.remainingMovementPoints = this.movementAllowance;
     }
-    
-    
 
     public Bitmap getBitmap(){
     	if(selected){
@@ -196,16 +194,57 @@ public class Unit {
     	return allowableMoveHexes;
     }
     
-    public void rally(){
+    private boolean checkEnemyUnitInAdjacentHex(ArrayList<Terrain> wholeMap){
+    	
+    	ArrayList<Integer> adjacentHexes = getAllowableMoveHexChoice();
+    	for (int hex : adjacentHexes){
+    		if (wholeMap.get(hex).isUnitAlreadyinHex()){
+    			return true;
+    		}
+    	}
+    	return false;
+    }
+    
+    private boolean checkIfEnemyUnitInAdjacentHexIsCavalry(ArrayList<Terrain> wholeMap){
+    	
+		boolean onlyCavalry = true;
+    	ArrayList<Integer> adjacentHexes = getAllowableMoveHexChoice();
+    	for (int hex : adjacentHexes){
+    		if (wholeMap.get(hex).isUnitAlreadyinHex()){
+    			if (wholeMap.get(hex).getUnitInTile().type.equals("Foot")){
+    				onlyCavalry = false;
+    			}
+    		}
+    	}
+    	return onlyCavalry;
+    }
+    
+    private boolean checkArmyMorale(){
+    	
+    	boolean armyMorale = false;
+    	if (this.name.equals("Newcastle") && this.type.equals("Foot")){
+    		armyMorale = true;
+    	}
+    	if (this.name.equals("Manchester") && (this.type.equals("HeavyHorse") |this.type.equals("LightHorse"))){
+    		armyMorale = true;
+    	}
+    	return false;
+    }
+    
+    public void rally(ArrayList<Terrain> wholeMap, boolean armyMorale){
     	
     	// Unit ineligible for a rally check if next to ordered enemy unit
+    	checkEnemyUnitInAdjacentHex(wholeMap);
+    	
     	// unless the unit is a foot unit in woods, close or train hex and the enemy is cavalry
+    	checkIfEnemyUnitInAdjacentHexIsCavalry(wholeMap);
     	
     	// Units that are part of demoralized army are ineligible for a rally check
     	// unless 
     	//	Unit is stacked with leader of same colour
     	//	Unit is horse in Manchesters force
     	//	Unit is foot unit in Newcastles force
+    	checkArmyMorale();
     	
     	// Check Morale Rating of the unit
     	

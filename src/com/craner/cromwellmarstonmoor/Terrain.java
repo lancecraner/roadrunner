@@ -30,12 +30,12 @@ public class Terrain {
     private String terrainEffectAttackLightHorse;
     private String terrainEffectAttackHeavyHorse;
 
-    private String TerrainHexSideModifier1; 
+    private String TerrainHexSideModifier0; 
+    private String TerrainHexSideModifier1;
     private String TerrainHexSideModifier2;
     private String TerrainHexSideModifier3;
     private String TerrainHexSideModifier4;
     private String TerrainHexSideModifier5;
-    private String TerrainHexSideModifier6;
     
     private Rect displayRect;
     
@@ -46,6 +46,7 @@ public class Terrain {
     Bitmap bitmap;
    
 
+    // Constructor
     public Terrain(String properties, Context context){
 
         String[] splits = properties.split(",");
@@ -56,12 +57,12 @@ public class Terrain {
         setTerrainEffectAttackLightHorse(splits[4]);
         setTerrainEffectAttackHeavyHorse(splits[5]);
         
-        TerrainHexSideModifier1= (splits[6]);
-        TerrainHexSideModifier2= (splits[7]);
-        TerrainHexSideModifier3= (splits[8]);
-        TerrainHexSideModifier4= (splits[9]);
-        TerrainHexSideModifier5= (splits[10]);
-        TerrainHexSideModifier6= (splits[11]);
+        TerrainHexSideModifier0= (splits[6]);
+        TerrainHexSideModifier1= (splits[7]);
+        TerrainHexSideModifier2= (splits[8]);
+        TerrainHexSideModifier3= (splits[9]);
+        TerrainHexSideModifier4= (splits[10]);
+        TerrainHexSideModifier5= (splits[11]);
         setTerrainType(splits[12]);
 
         int resourceID = context.getResources().getIdentifier(splits[12], "drawable",context.getPackageName());
@@ -72,6 +73,7 @@ public class Terrain {
     }
     
     // Copy constructor
+    // Allows copy of class and not reference to this class
     public Terrain(Terrain source){
     	
     	this.bitmap = source.bitmap;
@@ -85,15 +87,12 @@ public class Terrain {
     	this.terrainNumber = source.terrainNumber;
     	this.displayRect = source.displayRect;
     	
+    	this.TerrainHexSideModifier0 = source.TerrainHexSideModifier0;
     	this.TerrainHexSideModifier1 = source.TerrainHexSideModifier1;
     	this.TerrainHexSideModifier2 = source.TerrainHexSideModifier2;
     	this.TerrainHexSideModifier3 = source.TerrainHexSideModifier3;
     	this.TerrainHexSideModifier4 = source.TerrainHexSideModifier4;
     	this.TerrainHexSideModifier5 = source.TerrainHexSideModifier5;
-    	this.TerrainHexSideModifier6 = source.TerrainHexSideModifier6;
-    	
-    	
-    
     }
 
     public void setBitmap(Bitmap bitmap){
@@ -152,6 +151,14 @@ public class Terrain {
         this.terrainEffectAttackHeavyHorse = terrainEffectAttackHeavyHorse;
     }
 
+    public String getHexSideModifier0(){
+        return this.TerrainHexSideModifier0;
+    }
+
+    public void setHexSideModifier0(String terrainHexSideModifier){
+        this.TerrainHexSideModifier0 = terrainHexSideModifier;
+    }
+    
     public String getHexSideModifier1(){
         return this.TerrainHexSideModifier1;
     }
@@ -192,14 +199,6 @@ public class Terrain {
         this.TerrainHexSideModifier5 = terrainHexSideModifier;
     }
     
-    public String getHexSideModifier6(){
-        return this.TerrainHexSideModifier6;
-    }
-
-    public void setHexSideModifier6(String terrainHexSideModifier){
-        this.TerrainHexSideModifier6 = terrainHexSideModifier;
-    }
-
     public void setTerrainType(String terrainType){
         this.terrainType = terrainType;
     }
@@ -278,36 +277,30 @@ public void setUnitInTileRect(){
     
     public int getHexsideMovementModifier(int hexSide, String unitType){
     	
-    	int modifier = 0;
-    	String sideMod;
+    	String sideMod = "0";
     	switch (hexSide){
     		case 0:
-    			sideMod = this.TerrainHexSideModifier1;
-    			hexsideMovementModifier(sideMod,unitType);
+    			sideMod = this.TerrainHexSideModifier0;
     			break;
     		case 1:
-    			sideMod = this.TerrainHexSideModifier2;
-    			hexsideMovementModifier(sideMod,unitType);
+    			sideMod = this.TerrainHexSideModifier1;
     			break;
     		case 2:
-    			sideMod = this.TerrainHexSideModifier3;
-    			hexsideMovementModifier(sideMod,unitType);
+    			sideMod = this.TerrainHexSideModifier2;
     			break;
     		case 3:
-    			sideMod = this.TerrainHexSideModifier4;
-    			hexsideMovementModifier(sideMod,unitType);
+    			sideMod = this.TerrainHexSideModifier3;
     			break;
     		case 4:
-    			sideMod = this.TerrainHexSideModifier5;
-    			hexsideMovementModifier(sideMod,unitType);
+    			sideMod = this.TerrainHexSideModifier4;
     			break;
     		case 5:
-    			sideMod = this.TerrainHexSideModifier6;
-    			hexsideMovementModifier(sideMod,unitType);
+    			sideMod = this.TerrainHexSideModifier5;
     			break;
     		
     	}
-    	return modifier;
+    	
+    	return hexsideMovementModifier(sideMod,unitType);
     	
     }
     
