@@ -22,6 +22,8 @@ public class Unit {
 	private int remainingMovementPoints;
 	private String army;
 	boolean disrupted = false;
+	String ROYALISTS = "R";
+	String ALLIED = "A";
 	
 	private Rect displayRect;
 
@@ -30,7 +32,7 @@ public class Unit {
     
     public Unit(String properties, Context context){
 
-    	// 6,3,4,4,3,2,Foot,Newcastle,0517,u1,u1_sel
+    	// 6,3,4,4,3,2,Artillery,Newcastle,1617,a1,u2_sel,R
         String[] splits = properties.split(",");
         this.combatStrength = (Integer.parseInt(splits[0]));
         this.moraleRating = (Integer.parseInt(splits[1]));
@@ -231,6 +233,23 @@ public class Unit {
     	return false;
     }
     
+    private boolean inEnemyTrainHex(){
+    	
+    	boolean inEnemyTrainHex = false;
+    	
+    	if (this.army.equals(ROYALISTS)){
+    		if (this.Hex == 2810){
+    			inEnemyTrainHex = true;
+    		}
+    	} else if (this.army.equals(ALLIED)){
+    		if (this.Hex == 814){
+    			inEnemyTrainHex = true;
+    		}
+    	}
+    	
+    	return inEnemyTrainHex;
+    }
+    
     public void rally(ArrayList<Terrain> wholeMap, boolean armyMorale){
     	
     	// Unit ineligible for a rally check if next to ordered enemy unit
@@ -254,7 +273,10 @@ public class Unit {
     	
     	// Or add 1 if the unit is in its own Train hex
     	
-    	// Subtract 2 if in enemies Train
+    	// Subtract 2 if in enemies Train HEX
+    	// Allied Hex 0814
+    	// Royalists Hex 2810
+    	inEnemyTrainHex();
     	
     	// Roll die
     	
@@ -262,8 +284,6 @@ public class Unit {
     	
     	// If result is less than or equal to the modified morale rating the unit rallies.
     
-    	
-    	
     }
 	
 }
