@@ -24,7 +24,10 @@ public class Unit {
 	boolean disrupted = false;
 	String ROYALISTS = "R";
 	String ALLIED = "A";
+	boolean mustBeAttacked = false;
 	
+	
+
 	private Rect displayRect;
 
     Bitmap bitmap;
@@ -150,6 +153,20 @@ public class Unit {
     public boolean isDisrupted(){
     	return disrupted;
     }
+    
+    /**
+	 * @return the mustBeAttacked
+	 */
+	public boolean isMustBeAttacked() {
+		return mustBeAttacked;
+	}
+
+	/**
+	 * @param mustBeAttacked the mustBeAttacked to set
+	 */
+	public void setMustBeAttacked(boolean mustBeAttacked) {
+		this.mustBeAttacked = mustBeAttacked;
+	}
     
     public int getRemainingMovementPoints(){
     	return this.movementAllowance;

@@ -19,8 +19,9 @@ import android.content.Context;
 
 public class Terrain {
 
-    private String terrainType;
+    private String tilenumber;
     private int terrainNumber;
+    private String terrainType;
 
     private int terrainEffectFoot;
     private int terrainEffectLightHorse;
@@ -63,7 +64,7 @@ public class Terrain {
         TerrainHexSideModifier3= (splits[9]);
         TerrainHexSideModifier4= (splits[10]);
         TerrainHexSideModifier5= (splits[11]);
-        setTerrainType(splits[12]);
+        setTileNumber(splits[12]);
 
         int resourceID = context.getResources().getIdentifier(splits[12], "drawable",context.getPackageName());
         bitmap = BitmapFactory.decodeResource(context.getResources(), resourceID);
@@ -83,7 +84,7 @@ public class Terrain {
     	this.terrainEffectAttackFoot = source.terrainEffectAttackFoot;
     	this.terrainEffectAttackLightHorse = source.terrainEffectAttackLightHorse;
     	this.terrainEffectAttackHeavyHorse = source.terrainEffectAttackHeavyHorse;
-    	this.terrainType = source.terrainType;
+    	this.tilenumber = source.tilenumber;
     	this.terrainNumber = source.terrainNumber;
     	this.displayRect = source.displayRect;
     	
@@ -199,12 +200,12 @@ public class Terrain {
         this.TerrainHexSideModifier5 = terrainHexSideModifier;
     }
     
-    public void setTerrainType(String terrainType){
-        this.terrainType = terrainType;
+    public void setTileNumber(String tilenumber){
+        this.tilenumber = tilenumber;
     }
 
-    public String getTerrainType(){
-        return this.terrainType;
+    public String getTileNumber(){
+        return this.tilenumber;
     }
     
     public void setTerrainNumber(int terrainNumber){
