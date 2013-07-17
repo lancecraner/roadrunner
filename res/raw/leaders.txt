@@ -1,0 +1,9 @@
+6,8,Cromwell,Manchester,1307,l1,A
+3,8,Rupert,Rupert,2305,l1,R
+1,8,Bryan,Rupert,2003,c1,R
+1,8,Newcastle,Newcastle,2210,l1,R
+2,8,Eythin,Newcastle,1914,l1,R
+2,8,Goring,Newcastle,1421,l1,R
+1,8,Leven,Leven,0813,l1,R
+1,8,Fairfax,Fairfax,1113,l1,R
+2,8,TFairfax,Fairfax,1122,l1,R
