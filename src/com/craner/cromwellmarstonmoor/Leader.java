@@ -18,17 +18,6 @@ public class Leader {
 	- If enemy Units enter a friendly Leaders hex, he is displaced to nearest friendly Unit (if none on board, he is eliminated). 
 	- When Royalist Unit first enters allied train hex, Leven is removed from the map (does not count for demoralization/VP purposes)*/
 	
-	/*- Only affect Units of their own force for rally/combat purposes. 
-	- Only one leader can affect a Unit at a time for rally/combat purposes. 
-	- Move # hexes, rather than spending MP. 
-	- Cannot enter enemy Unit hexes. 
-	- Cannot enter enemy Arty hexes (unless already captured) 
-	- Can move through (but not end movement in) enemy Leader hexes. 
-	- Cannot participate in combat when alone. 
-	- Any number of eligible Units may use a given leader for rally. 
-	- If enemy Units enter a friendly Leader’s hex, he is displaced to nearest friendly Unit (if none on board, he is eliminated). 
-	- When Royalist Unit first enters allied train hex, Leven is removed from the map (does not count for demoralization/VP purposes)*/
-	
 	private int commandRating = 0;
 	private int movementAllowance = 0;
 	private String type;
