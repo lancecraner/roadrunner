@@ -17,15 +17,6 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 
 /**
- * Created by Lance on 11/06/13.
- */
-
-
-/**
- * @author Lance
- *
- */
-/**
  * @author lcraner
  *
  */
@@ -37,6 +28,7 @@ public class GameBoard extends View {
     ArrayList<String> map; // Contains Hex/Tile details
     //ArrayList<String> tileCoordinates;
     ArrayList<Unit> units; // Contains all the Games Units
+    //ArrayList<Unit> Unit; // Contains all the Games Units
     ArrayList<Leader> leaders; // Contains all the Games Leaders
     Map visiblemap; // Used to help display just the visible map onscreen
     int startRow = 0; // Start row to display on screen
@@ -257,6 +249,7 @@ public class GameBoard extends View {
         try {
             // While the BufferedReader readLine is not null
         	units = new ArrayList<Unit>();
+        	
             while ((readLine = br.readLine()) != null) {
             	Unit unit = new Unit(readLine, this.mContext );
             	units.add(unit);

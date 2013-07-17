@@ -27,18 +27,9 @@ public class Unit {
 	
 	private boolean disrupted = false;
 	private boolean selected = false;
-<<<<<<< HEAD
+
 	private boolean mustBeAttacked = false;
 	private boolean mustAttack = false;
-=======
-	private int remainingMovementPoints;
-	private String army;
-	boolean disrupted = false;
-	String ROYALISTS = "R";
-	String ALLIED = "A";
-	boolean mustBeAttacked = false;
->>>>>>> branch 'master' of https://github.com/lancecraner/roadrunner.git
-	
 	
 
 	private Rect displayRect;
@@ -77,14 +68,6 @@ public class Unit {
 	
 	public int getcombatStrength(){
 		return this.combatStrength;
-	}
-
-	public boolean isMustBeAttacked() {
-		return mustBeAttacked;
-	}
-
-	public void setMustBeAttacked(boolean mustBeAttacked) {
-		this.mustBeAttacked = mustBeAttacked;
 	}
 
 	public boolean isMustAttack() {
@@ -275,7 +258,7 @@ public class Unit {
     	return onlyCavalry;
     }
     
-<<<<<<< HEAD
+
     private boolean checkArmyMorale(boolean armyMorale){
     	
     	if (this.name.equals("Newcastle") && this.type.equals("Foot")){
@@ -288,7 +271,8 @@ public class Unit {
     	
     	
     	return armyMorale;
-=======
+}
+
     private boolean checkArmyMorale(){
     	
     	boolean armyMorale = false;
@@ -299,7 +283,7 @@ public class Unit {
     		armyMorale = true;
     	}
     	return false;
->>>>>>> branch 'master' of https://github.com/lancecraner/roadrunner.git
+
     }
     
     private boolean inEnemyTrainHex(){
@@ -332,11 +316,11 @@ public class Unit {
     	//	Unit is stacked with leader of same colour
     	//	Unit is horse in Manchesters force
     	//	Unit is foot unit in Newcastles force
-<<<<<<< HEAD
+
     	checkArmyMorale(armyMorale);
-=======
+
     	checkArmyMorale();
->>>>>>> branch 'master' of https://github.com/lancecraner/roadrunner.git
+
     	
     	// Check Morale Rating of the unit
     	

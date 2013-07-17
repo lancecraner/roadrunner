@@ -46,7 +46,7 @@ public class Map {
 			    String t = array[j];
 			    String[] maptile = t.split("/"); 
 			    for (Terrain tile : terrain){
-			    	String terraintype = tile.getTerrainType();
+			    	String terraintype = tile.getTileNumber();
 			    	if (terraintype.equals(maptile[1])){
 			    		Terrain newTile = new Terrain(tile);
 			    		newTile.setTerrainNumber(Integer.parseInt(maptile[0]));
