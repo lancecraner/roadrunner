@@ -1,6 +1,0 @@
-Ad,,,Dx,Dd,Dd,Dd,De,De,De,De
-Ad,Ad,,,Dx,Dd,Dd,Dd,De,De,De
-Ae,Ad,Ad,,,Dx,Dd,Dd,Dd,De,De
-Ae,Ad,Ad,Dx,,,Dx,Dd,Dd,Dd,De
-Ae,Ae,Ad,Ad,Dx,,,Dx,Dd,Dd,Dd
-Ae,Ae,Ae,Ad,Ad,Dx,,,Dx,Dd,Dd

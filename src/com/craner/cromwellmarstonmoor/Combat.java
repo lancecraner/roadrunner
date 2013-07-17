@@ -19,6 +19,7 @@ public class Combat {
 	- Halve strength of Units attacking out of marsh, across ditch/stream, or up slope (drop fractions for each Unit before combining 
 	Units). 
 	- Add command rating of one eligible leader stacked with Unit in each attacking hex. Leader is eligible if of same force as Unit he 
+<<<<<<< HEAD
 	is stacked with. Cannot add more points than Unit's printed strength.
 	Defending strength total: 
 	- Add command rating of one eligible leader stacked with Unit in each defending hex. Leader is eligible if of same force as Unit he 
@@ -27,10 +28,19 @@ public class Combat {
 	 - -2 DRM the 1st time an unmodified 6 was rolled during Visibility check*/
 	private ArrayList<Unit> unitsDefending;
 	private ArrayList<Unit> unitsAttacking;
+=======
+	is stacked with. Cannot add more points than Unit’s printed strength.
+	Defending strength total: 
+	- Add command rating of one eligible leader stacked with Unit in each defending hex. Leader is eligible if of same force as Unit he 
+	is stacked with. Cannot add more points than Unit’s printed strength.
+	- Roll 1d6 on CRT using row corresponding to best defending terrain. 
+	 - -2 DRM the 1st time an unmodified 6 was rolled during Visibility check*/
+>>>>>>> branch 'master' of https://github.com/lancecraner/roadrunner.git
 	
 	public void loadCombatTable(){
 		
 	}
+<<<<<<< HEAD
 	
 	public void markUnitsThatMustDefendorAttack(ArrayList<Terrain> wholeMap, String attackingArmy, String defendingArmy){
 		
@@ -71,11 +81,33 @@ public class Combat {
 	public void markUnitsThatCouldBeAttacked(){
 		
 	}
+=======
+>>>>>>> branch 'master' of https://github.com/lancecraner/roadrunner.git
 	
 	public void totalAttackStrength(){
 		
 	}
 	
+<<<<<<< HEAD
+=======
+	public void markUnitsToAttack(){
+		
+	}
+	
+	
+	public void markUnitsThatMustBeAttacked(){
+		
+	}
+	
+	public void markUnitsThatCouldBeAttacked(){
+		
+	}
+	
+	public void totalAttackStrength(){
+		
+	}
+	
+>>>>>>> branch 'master' of https://github.com/lancecraner/roadrunner.git
 	public void totalDefendStrength(){
 		
 	}
