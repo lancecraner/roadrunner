@@ -1,6 +1,7 @@
 package com.craner.cromwellmarstonmoor;
 
 import java.util.ArrayList;
+import java.util.Random;
 
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -15,22 +16,28 @@ public class Unit {
 	private int disruptedCombatStrength = 0;
 	private int disruptedMoraleRating = 0;
 	private int disruptedMovementAllowance = 0;
+	private int Hex = 0;
+	private int remainingMovementPoints;
+	
+	private String army;
 	private String type;
 	private String name;
-	private int Hex = 0;
+	private String ROYALISTS = "R";
+	private String ALLIED = "A";
+	
+	private boolean disrupted = false;
 	private boolean selected = false;
-	private int remainingMovementPoints;
-	private String Army;
-	boolean disrupted = false;
+	private boolean mustBeAttacked = false;
+	private boolean mustAttack = false;
 	
 	private Rect displayRect;
 
-    Bitmap bitmap;
-    Bitmap bitmapSelected;
+    private Bitmap bitmap;
+    private Bitmap bitmapSelected;
     
     public Unit(String properties, Context context){
 
-    	// 6,3,4,4,3,2,Foot,Newcastle,0517,u1,u1_sel
+    	// 6,3,4,4,3,2,Artillery,Newcastle,1617,a1,u2_sel,R
         String[] splits = properties.split(",");
         this.combatStrength = (Integer.parseInt(splits[0]));
         this.moraleRating = (Integer.parseInt(splits[1]));
@@ -49,7 +56,7 @@ public class Unit {
         resourceID = context.getResources().getIdentifier(splits[10], "drawable",context.getPackageName());
         bitmapSelected = BitmapFactory.decodeResource(context.getResources(), resourceID);
         
-        Army = splits[11];
+        this.army = splits[11];
         
     }
 	
@@ -59,6 +66,22 @@ public class Unit {
 	
 	public int getcombatStrength(){
 		return this.combatStrength;
+	}
+
+	public boolean isMustBeAttacked() {
+		return mustBeAttacked;
+	}
+
+	public void setMustBeAttacked(boolean mustBeAttacked) {
+		this.mustBeAttacked = mustBeAttacked;
+	}
+
+	public boolean isMustAttack() {
+		return mustAttack;
+	}
+
+	public void setMustAttack(boolean mustAttack) {
+		this.mustAttack = mustAttack;
 	}
 
 	public void setmoraleRating(int moraleRating){
@@ -109,6 +132,14 @@ public class Unit {
 		return this.Hex;
 	}
 	
+	public String getArmy() {
+		return army;
+	}
+
+	public void setArmy(String army) {
+		this.army = army;
+	}
+
 	public String gettype(){
 		return this.type;
 	}
@@ -160,8 +191,6 @@ public class Unit {
     public void resetRemainingMovementPoints(){
     	this.remainingMovementPoints = this.movementAllowance;
     }
-    
-    
 
     public Bitmap getBitmap(){
     	if(selected){
@@ -196,16 +225,76 @@ public class Unit {
     	return allowableMoveHexes;
     }
     
-    public void rally(){
+    private boolean checkEnemyUnitInAdjacentHex(ArrayList<Terrain> wholeMap){
+    	
+    	ArrayList<Integer> adjacentHexes = getAllowableMoveHexChoice();
+    	for (int hex : adjacentHexes){
+    		if (wholeMap.get(hex).isUnitAlreadyinHex()){
+    			return true;
+    		}
+    	}
+    	return false;
+    }
+    
+    private boolean checkIfEnemyUnitInAdjacentHexIsCavalry(ArrayList<Terrain> wholeMap){
+    	
+		boolean onlyCavalry = true;
+    	ArrayList<Integer> adjacentHexes = getAllowableMoveHexChoice();
+    	for (int hex : adjacentHexes){
+    		if (wholeMap.get(hex).isUnitAlreadyinHex()){
+    			if (wholeMap.get(hex).getUnitInTile().type.equals("Foot")){
+    				onlyCavalry = false;
+    			}
+    		}
+    	}
+    	return onlyCavalry;
+    }
+    
+    private boolean checkArmyMorale(boolean armyMorale){
+    	
+    	if (this.name.equals("Newcastle") && this.type.equals("Foot")){
+    		armyMorale = true;
+    	}
+    	if (this.name.equals("Manchester") && (this.type.equals("HeavyHorse") | this.type.equals("LightHorse"))){
+    		armyMorale = true;
+    	}
+    	// Check if stack with leader of same colour
+    	
+    	
+    	return armyMorale;
+    }
+    
+    private boolean inEnemyTrainHex(){
+    	
+    	boolean inEnemyTrainHex = false;
+    	
+    	if (this.army.equals(ROYALISTS)){
+    		if (this.Hex == 2810){
+    			inEnemyTrainHex = true;
+    		}
+    	} else if (this.army.equals(ALLIED)){
+    		if (this.Hex == 814){
+    			inEnemyTrainHex = true;
+    		}
+    	}
+    	
+    	return inEnemyTrainHex;
+    }
+    
+    public void rally(ArrayList<Terrain> wholeMap, boolean armyMorale){
     	
     	// Unit ineligible for a rally check if next to ordered enemy unit
+    	checkEnemyUnitInAdjacentHex(wholeMap);
+    	
     	// unless the unit is a foot unit in woods, close or train hex and the enemy is cavalry
+    	checkIfEnemyUnitInAdjacentHexIsCavalry(wholeMap);
     	
     	// Units that are part of demoralized army are ineligible for a rally check
     	// unless 
     	//	Unit is stacked with leader of same colour
     	//	Unit is horse in Manchesters force
     	//	Unit is foot unit in Newcastles force
+    	checkArmyMorale(armyMorale);
     	
     	// Check Morale Rating of the unit
     	
@@ -215,16 +304,19 @@ public class Unit {
     	
     	// Or add 1 if the unit is in its own Train hex
     	
-    	// Subtract 2 if in enemies Train
+    	// Subtract 2 if in enemies Train HEX
+    	// Allied Hex 0814
+    	// Royalists Hex 2810
+    	inEnemyTrainHex();
     	
     	// Roll die
+    	Random generateRoll = new Random();
+    	int dieRoll = generateRoll.nextInt(5) + 1;
     	
     	// Add 1 to die roll if visibility is obscured or minimal
     	
     	// If result is less than or equal to the modified morale rating the unit rallies.
     
-    	
-    	
     }
 	
 }

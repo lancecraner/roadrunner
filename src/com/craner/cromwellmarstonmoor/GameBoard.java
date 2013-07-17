@@ -25,25 +25,30 @@ import java.util.ArrayList;
  * @author Lance
  *
  */
+/**
+ * @author lcraner
+ *
+ */
 public class GameBoard extends View {
 
-    Context mContext;
-    ArrayList<Terrain> terrain;
-    //ArrayList<Terrain> visibleTerrain;
-    ArrayList<Terrain> wholeMap;
-    ArrayList<String> map;
-    ArrayList<String> tileCoordinates;
-    ArrayList<Unit> units;
-    Map visiblemap;
-    int startRow = 0;
-    int startColumn = 0;
-    boolean mapchanged = true;
-    boolean unitSelected = false;
-    Terrain terrainSelected;
-    Terrain unitTerrainSelected;
-    int X_MOVE = 0;
-    int Y_MOVE = 0;
-    boolean odd = false;
+    Context mContext; // Context is passed into some of the other classes to load up bitmap
+    ArrayList<Terrain> terrain; // loaded with details on each individual Terrain Tile type
+    ArrayList<Terrain> wholeMap; // Contains the whole map 
+    ArrayList<String> map; // Contains Hex/Tile details
+    //ArrayList<String> tileCoordinates;
+    ArrayList<Unit> units; // Contains all the Games Units
+    ArrayList<Leader> leaders; // Contains all the Games Leaders
+    Map visiblemap; // Used to help display just the visible map onscreen
+    int startRow = 0; // Start row to display on screen
+    int startColumn = 0; // Start column to display on screen
+    boolean mapchanged = true; // Flag to say something changed on the screen to update
+    boolean unitSelected = false; // Flag to indicate if a unit has been selected
+    //Terrain terrainSelected;
+    Terrain unitTerrainSelected; // Selected Hex unit wants to move to
+    int X_MOVE = 0; // Used when working out screen scrolling
+    int Y_MOVE = 0; // Used when working out screen scrolling
+    boolean odd = false; // Used to indicate if first column of hexes are odd numbered
+    // Constants 
     int MAX_MAP_ROWS = 22;
     int MAX_ROW_DISPLAY = 15;
     int MAX_COLUMN_DISPLAY = 13;
@@ -55,14 +60,20 @@ public class GameBoard extends View {
     public GameBoard(Context context, AttributeSet attrs) {
         super(context, attrs);
 
-            mContext = context;
             // Initialise Game
+            mContext = context;
+            // Load in Units
             loadUnits(R.raw.units);
+            // Load in Leaders
+            loadLeaders(R.raw.leaders);
+            // Load in Terrain Tiles
             loadTerrain(R.raw.terrainmodifiers);
+            // Load in map - Hex numbers/Tile Type
             loadMap(R.raw.map);
-           // loadUnits(R.raw.units);
+            // Create Map in Memory
             visiblemap = new Map(map);
             wholeMap = visiblemap.returnMap(startRow, startColumn, terrain, units);
+            // Don't need this anymore
             terrain = null;
             
             paint = new Paint();
@@ -80,7 +91,7 @@ public class GameBoard extends View {
 			if (startRow > MAX_ROW_DISPLAY){
 				startRow = MAX_ROW_DISPLAY;
 			}
-			ArrayList<Unit> unitsToDisplay = new ArrayList<Unit>();
+			
 			
 			// Check if start column is odd or even as effects layout
 			if (startColumn%2 == 1){
@@ -88,6 +99,9 @@ public class GameBoard extends View {
 			}else{
 				odd = false;
 			}
+			
+			// Array to hold units that will be visible on screen
+			ArrayList<Unit> unitsToDisplay = new ArrayList<Unit>();
 				
 			// Loop through Map to return visible map
 			for (int i = startColumn; i< 18 + startColumn; i++){
@@ -114,12 +128,14 @@ public class GameBoard extends View {
     				canvas.drawBitmap(unit.getBitmap(), null, unit.getDisplayRect(), paint);
     			}
     		}
+    		
     		// Reset flag
     		mapchanged = false;
     	}
     }
     
- // Work out where Tile should be displayed on canvas
+    // Work out where Tile should be displayed on canvas
+    // Depending on whether tile is odd numbered or even number effects display position
  	private Rect setTileDisplayRect(int column, int row, boolean bit){
  		
  		int left = 0;
@@ -207,6 +223,31 @@ public class GameBoard extends View {
         }
     }
     
+    private void loadLeaders(int resourceId) {
+        // The InputStream opens the resourceId and sends it to the buffer
+        InputStream is = this.getResources().openRawResource(resourceId);
+        BufferedReader br = new BufferedReader(new InputStreamReader(is));
+        String readLine = null;
+
+        try {
+            // While the BufferedReader readLine is not null
+        	leaders = new ArrayList<Leader>();
+            while ((readLine = br.readLine()) != null) {
+            	Leader leader = new Leader(readLine, this.mContext );
+            	leaders.add(leader);
+               
+                //Log.d("UNITS", readLine);
+            }
+
+            // Close the InputStream and BufferedReader
+            is.close();
+            br.close();
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+    
     private void loadUnits(int resourceId) {
         // The InputStream opens the resourceId and sends it to the buffer
         InputStream is = this.getResources().openRawResource(resourceId);
@@ -241,6 +282,7 @@ public class GameBoard extends View {
     		// Get co-ordinates where touched
 	        int X = (int)event.getX();
 	        int Y = (int)event.getY();
+	        // Set global variables so can check later if should scroll screen
 	        X_MOVE = X;
 	        Y_MOVE = Y;
 	        
@@ -325,8 +367,15 @@ public class GameBoard extends View {
     	return true;
     }
     
-    // Called from onTouch event
-    // Finds the Hex that user touched on
+    /**
+     * Called from onTouch event
+     * Finds the hex that the user touched
+     * 
+     * @param X - X Coordinates
+     * @param Y - Y Coordinates
+     * @param bit - Used to indicate odd or even row due to Hex placement
+     * @return The hex number
+     */
     private int findSelectedHex(int X, int Y, boolean bit){
     	
     	int tileWidth = 65;
@@ -358,8 +407,13 @@ public class GameBoard extends View {
         return (selectedRow + startRow) + ((selectedColumn + startColumn)* MAX_MAP_ROWS);
     }
     
-    // Called from onTouch event
-    // Checks selected Hex and sees if a Unit is in there
+    /**
+     * Called from onTouch event
+     * Checks selected Hex and sees if a Unit is in there
+     * 
+     * @param selectedHex - Hex user touched on the screen
+     * @return True if unit was in the hex
+     */
     private boolean updateSelectedHex(int selectedHex){
         
     	boolean unitFound = false;
@@ -418,6 +472,15 @@ public class GameBoard extends View {
         return unitFound;
     }
     
+    /**
+     * Called to check if unit has enough movement points left to move into selected
+     * hex. Update Unit movement allowance if move is allowed
+     * 
+     * @param terrain - Tile being move to
+     * @param side - Which side of the hex being moved into
+     * @param unit - The unit attempting the move
+     * @return True if ok to move
+     */
     private boolean checkCanMoveIntoHex(Terrain terrain, int side, Unit unit){
     	
     	boolean canMove = false;

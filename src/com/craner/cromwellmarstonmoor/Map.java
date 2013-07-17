@@ -19,7 +19,15 @@ public class Map {
 		this.map = map;
 	}
 	
-	// return only the part of the map that will be visible
+	/**
+	 * Return only the part of the map that will be visible
+	 * 
+	 * @param startrow
+	 * @param startcolumn
+	 * @param terrain
+	 * @param units
+	 * @return
+	 */
 	public ArrayList<Terrain> returnMap(int startrow, int startcolumn, ArrayList<Terrain> terrain, ArrayList<Unit> units){
 		
 		ArrayList<Terrain> returnMap = new ArrayList<Terrain>();
@@ -42,7 +50,7 @@ public class Map {
 			    	if (terraintype.equals(maptile[1])){
 			    		Terrain newTile = new Terrain(tile);
 			    		newTile.setTerrainNumber(Integer.parseInt(maptile[0]));
-			    		Log.d("TERRAIN", maptile[0]);
+			    		//Log.d("TERRAIN", maptile[0]);
 			    		newTile.setDisplayRect(setTileDisplayRect((i - startcolumn),(j - startrow)));
 			    		checkUnitInTile(newTile, units);
 			    		returnMap.add(newTile);
@@ -55,7 +63,13 @@ public class Map {
 		return returnMap;
 	}
 	
-	// Work out where Tile should be displayed on canvas
+	/**
+	 * Work out where Tile should be displayed on canvas
+	 * 
+	 * @param column
+	 * @param row
+	 * @return - Drawing Rect
+	 */
 	private Rect setTileDisplayRect(int column, int row){
 		
 		int left = 0;
@@ -81,8 +95,14 @@ public class Map {
 		return rect;
 	}
 	
-	// See if Unit is in location of Tile 
-	// If yes then store the unit within the Tile
+	/**
+	 * See if Unit is in location of Tile
+	 * If yes then store the unit within the Tile
+	 * 
+	 * @param tile - Tile to check
+	 * @param units - All units in game
+	 * @return - Unit if found
+	 */
 	private Unit checkUnitInTile(Terrain tile, ArrayList<Unit> units){
 		Unit unitInHex = null;
 		
@@ -95,5 +115,4 @@ public class Map {
 		
 		return unitInHex;
 	}
-	
 }
