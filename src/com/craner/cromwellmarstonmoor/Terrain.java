@@ -37,11 +37,13 @@ public class Terrain {
     private String TerrainHexSideModifier4;
     private String TerrainHexSideModifier5;
     
-    private Rect displayRect;
+    private boolean highlightForMovement = false;
+
+	private Rect displayRect;
     
     private Unit unitInTile = null;
     
-    ArrayList<Unit> leaders; 
+    ArrayList<Unit> unitsInTile; 
 
     Bitmap bitmap;
    
@@ -94,6 +96,14 @@ public class Terrain {
     	this.TerrainHexSideModifier4 = source.TerrainHexSideModifier4;
     	this.TerrainHexSideModifier5 = source.TerrainHexSideModifier5;
     }
+    
+    public boolean isHighlightForMovement() {
+		return highlightForMovement;
+	}
+
+	public void setHighlightForMovement(boolean highlightForMovement) {
+		this.highlightForMovement = highlightForMovement;
+	}
 
     public void setBitmap(Bitmap bitmap){
         this.bitmap = bitmap;
@@ -234,8 +244,13 @@ public class Terrain {
         this.unitInTile.setDisplayRect(rect);
     }
     
-public void setUnitInTileRect(){
+public void setUnitsInTile(Unit unitInTile){
     	
+        this.unitsInTile.add(unitInTile);
+    }
+    
+// TODO suggestion - adjust these for each subsequent unit to display stack of units?
+public void setUnitInTileRect(){
         
         int left = this.displayRect.left + 7;
         int top = this.displayRect.top + 3;
@@ -334,6 +349,29 @@ public void setUnitInTileRect(){
 		}
     	
     	return modifier;
+    }
+    
+public ArrayList<Integer> getAllowableMoveHexChoice(){
+    	
+    	ArrayList<Integer> allowableMoveHexes = new ArrayList<Integer>();
+    	
+    	if (this.terrainNumber%200 < 100){
+    		allowableMoveHexes.add(0, this.terrainNumber - 1);
+        	allowableMoveHexes.add(1, this.terrainNumber + 100);
+        	allowableMoveHexes.add(2, this.terrainNumber + 101);
+        	allowableMoveHexes.add(3, this.terrainNumber + 1);
+        	allowableMoveHexes.add(4, this.terrainNumber - 99);
+        	allowableMoveHexes.add(5, this.terrainNumber - 100);
+    	}else{
+    		allowableMoveHexes.add(0, this.terrainNumber - 1);
+        	allowableMoveHexes.add(1, this.terrainNumber + 99);
+        	allowableMoveHexes.add(2, this.terrainNumber + 100);
+        	allowableMoveHexes.add(3, this.terrainNumber + 1);
+        	allowableMoveHexes.add(4, this.terrainNumber - 100);
+        	allowableMoveHexes.add(5, this.terrainNumber - 101);
+    	}
+    	
+    	return allowableMoveHexes;
     }
 }
 

@@ -15,7 +15,12 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.HashMap;
 
+/**
+ * @author lcraner
+ *
+ */
 /**
  * @author lcraner
  *
@@ -31,6 +36,8 @@ public class GameBoard extends View {
     //ArrayList<Unit> Unit; // Contains all the Games Units
     ArrayList<Leader> leaders; // Contains all the Games Leaders
     Map visiblemap; // Used to help display just the visible map onscreen
+    HashMap<Integer, Integer> hashMapWholeMap; //Holds mapping to terrain tiles in visiblemap 
+    HashMap<String, Terrain> hashMapTerrain;
     int startRow = 0; // Start row to display on screen
     int startColumn = 0; // Start column to display on screen
     boolean mapchanged = true; // Flag to say something changed on the screen to update
@@ -64,7 +71,15 @@ public class GameBoard extends View {
             loadMap(R.raw.map);
             // Create Map in Memory
             visiblemap = new Map(map);
-            wholeMap = visiblemap.returnMap(startRow, startColumn, terrain, units);
+            //wholeMap = visiblemap.returnMap(terrain, units);
+            wholeMap = visiblemap.returnMap(hashMapTerrain, units);
+            // Create a Hashtable of the wholemap to make it easy to find particular hex
+            hashMapWholeMap = new HashMap<Integer, Integer>();
+            int count = 0;
+            for (Terrain hex : wholeMap){
+            	hashMapWholeMap.put(hex.getTerrainNumber(), count);
+            	count++;
+            }
             // Don't need this anymore
             terrain = null;
             
@@ -96,11 +111,21 @@ public class GameBoard extends View {
 			ArrayList<Unit> unitsToDisplay = new ArrayList<Unit>();
 				
 			// Loop through Map to return visible map
+			// TODO suggest rewriting this to display unit immediately and then
+			// TODO I can work out if stacked units in HEX
 			for (int i = startColumn; i< 18 + startColumn; i++){
 				
 				for (int j=startRow;j < 7 + startRow;j++) 
 				{ 
-					canvas.drawBitmap(wholeMap.get((MAX_MAP_ROWS * i) + j).getBitmap(), null, setTileDisplayRect(i - startColumn, j - startRow, odd), null);
+					
+					if(wholeMap.get((MAX_MAP_ROWS * i) + j).isHighlightForMovement()){
+						paint.setAlpha(50);
+						canvas.drawBitmap(wholeMap.get((MAX_MAP_ROWS * i) + j).getBitmap(), null, setTileDisplayRect(i - startColumn, j - startRow, odd), paint);
+						wholeMap.get((MAX_MAP_ROWS * i) + j).setHighlightForMovement(false);
+					}
+					else{
+						canvas.drawBitmap(wholeMap.get((MAX_MAP_ROWS * i) + j).getBitmap(), null, setTileDisplayRect(i - startColumn, j - startRow, odd), null);
+					}
 					//Log.d("TERRAIN", Integer.toString(wholeMap.get((MAX_MAP_ROWS * i)+j).getTerrainNumber()));
 					// Check if Terrain holds units as we need to display them last over the map bitmap
 	    			if (wholeMap.get((MAX_MAP_ROWS * i) + j).getUnitInTile() != null){
@@ -111,7 +136,8 @@ public class GameBoard extends View {
 	    			}
 				} 
 			}
-    		// After Map has been displayed overlay units
+			
+			// Soldiers
     		for (Unit unit : unitsToDisplay){
     			if (unit.getmovementAllowance() != 0){
     				canvas.drawBitmap(unit.getBitmap(), null, unit.getDisplayRect(), null);
@@ -172,13 +198,12 @@ public class GameBoard extends View {
         InputStream is = this.getResources().openRawResource(resourceId);
         BufferedReader br = new BufferedReader(new InputStreamReader(is));
         String readLine = null;
-
+        hashMapTerrain = new HashMap<String, Terrain>();
         try {
             // While the BufferedReader readLine is not null
-        	terrain = new ArrayList<Terrain>();
             while ((readLine = br.readLine()) != null) {
                 Terrain terrainTile = new Terrain(readLine, this.mContext );
-                terrain.add(terrainTile);
+                hashMapTerrain.put(terrainTile.getTileNumber(), terrainTile);
                 //Log.d("TERRAIN", readLine);
             }
 
@@ -190,7 +215,7 @@ public class GameBoard extends View {
             e.printStackTrace();
         }
     }
-    
+      
     private void loadMap(int resourceId) {
         // The InputStream opens the resourceId and sends it to the buffer
         InputStream is = this.getResources().openRawResource(resourceId);
@@ -352,10 +377,7 @@ public class GameBoard extends View {
 		        	
 		        }
 	        }
-	        
-	        
     	}
-    	
     	
     	return true;
     }
@@ -457,6 +479,7 @@ public class GameBoard extends View {
 		        	mapchanged = true;
 		        	unitSelected = true;
 		        	unitFound = true;
+		        	displayAllPossibleMoveHexs(wholeMap.get(selectedHex),wholeMap.get(selectedHex).getUnitInTile().getRemainingMovementPoints(),wholeMap.get(selectedHex).getUnitInTile().gettype());
 		        	invalidate();
 	        	}
 	        }
@@ -485,5 +508,37 @@ public class GameBoard extends View {
     	}
     	
     	return canMove;
+    }
+    
+    
+    /**
+     * Algorithm to work out all hexes unit can reach
+     * @param hex - hex the unit is currently in
+     * @param remainingMovement - of the unit
+     * @param UnitType - of the unit
+     */
+    private void displayAllPossibleMoveHexs(Terrain hex, int remainingMovement, String UnitType){
+    	// Should be able to recursively call this 
+    	// Start with hex unit is in
+    	// work out adjacent hexes
+    	hex.setHighlightForMovement(true);
+    	ArrayList<Integer>hexesToCheck = hex.getAllowableMoveHexChoice();
+    	// start looping through each adjacent hex
+    	int hexSide = 0;
+		for (Integer hexNumber : hexesToCheck){
+			Terrain hexCheck = wholeMap.get( hashMapWholeMap.get(hexNumber));
+			// if already marked then ignore this hex
+			if(!hexCheck.isHighlightForMovement()){
+				// Look at move costs into hex 
+				int movementModifier = hexCheck.getHexsideMovementModifier(hexSide, UnitType) + hexCheck.getTerrainMovementCost(UnitType);
+				// If OK to move into then mark hex as movable into
+				if (remainingMovement >= movementModifier){
+					//hexCheck.setHighlightForMovement(true);
+					// then recursively call this method with that hex and remaining movement costs
+					displayAllPossibleMoveHexs(hexCheck, (remainingMovement - movementModifier), UnitType);
+				}
+			}
+			hexSide++;
+		}
     }
 }

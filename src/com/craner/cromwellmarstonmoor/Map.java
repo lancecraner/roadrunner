@@ -2,6 +2,7 @@ package com.craner.cromwellmarstonmoor;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 
 import android.graphics.Rect;
 import android.util.Log;
@@ -12,15 +13,55 @@ public class Map {
 	ArrayList<String> map;
 	
 	// Constants for visible map row and columns to return
-	int MAXROW = 7;
-	int MAXCOLUMN = 18;
+	//int MAXROW = 7;
+	//int MAXCOLUMN = 18;
 	
 	public Map(ArrayList<String> map){
 		this.map = map;
 	}
 	
+	
 	/**
-	 * Return only the part of the map that will be visible
+	 * Return complete Map with units correctly positioned 
+	 * 
+	 * @param hashMapTerrain
+	 * @param units
+	 * @return
+	 */
+	public ArrayList<Terrain> returnMap(HashMap<String, Terrain> hashMapTerrain, ArrayList<Unit> units){
+		
+		ArrayList<Terrain> returnMap = new ArrayList<Terrain>();
+		
+		String col = map.get(0);
+		String[] array = col.split(","); 
+		
+		// Loop through Map to return whole map
+		for (int i = 0; i< 31; i++){
+			col = map.get(i);
+			array = col.split(",");
+			array = Arrays.copyOfRange(array, 0, array.length);
+			 
+			for (int j=0;j < 22;j++) 
+			{ 
+			    String t = array[j];
+			    String[] maptile = t.split("/"); 
+			    // Find the correct Tile
+	    		Terrain newTile = new Terrain(hashMapTerrain.get(maptile[1]));
+	    		newTile.setTerrainNumber(Integer.parseInt(maptile[0]));
+	    		//Log.d("TERRAIN", maptile[0]);
+	    		newTile.setDisplayRect(setTileDisplayRect(i,j));
+	    		checkUnitInTile(newTile, units);
+	    		returnMap.add(newTile);
+			} 
+		}
+		
+		return returnMap;
+	}
+	
+	
+	
+	/**
+	 * Return complete map
 	 * 
 	 * @param startrow
 	 * @param startcolumn
@@ -28,6 +69,7 @@ public class Map {
 	 * @param units
 	 * @return
 	 */
+	// TODO Don't think I need this anymore? 
 	public ArrayList<Terrain> returnMap(int startrow, int startcolumn, ArrayList<Terrain> terrain, ArrayList<Unit> units){
 		
 		ArrayList<Terrain> returnMap = new ArrayList<Terrain>();
